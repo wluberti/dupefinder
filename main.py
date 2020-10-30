@@ -1,3 +1,4 @@
+#! /usr/bin/env python3
 # dupFinder.py
 
 """
@@ -5,7 +6,6 @@
 """
 import os, sys
 import hashlib
-import multiprocessing as mp
 
 def findDup(parentFolder):
     # Dups in format {hash:[names]}
@@ -51,11 +51,19 @@ def printResults(dict1):
     if len(results) > 0:
         print('Duplicates Found:')
         print('The following files are identical. The name could differ, but the content is identical')
-        print('___________________')
         for result in results:
-            for number, subresult in enumerate(result):
-                print(f'{number:4d}:  {subresult}')
             print('___________________')
+
+            best = max(result, key=len)
+            print(f"Best result to keep: {best}")
+
+            for subresult in result:
+                if (subresult != best):
+                    print(f"deleting: {subresult}")
+                    # try:
+                    #     os.remove(subresult)
+                    # except Exception as e:
+                    #     print (f"{result} error: {e}")
 
     else:
         print('No duplicate files found.')
@@ -65,6 +73,7 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         dups = {}
         folders = sys.argv[1:]
+
         for i in folders:
             # Iterate the folders given
             if os.path.exists(i):
